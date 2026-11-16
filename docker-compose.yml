@@ -1,0 +1,9 @@
+services:
+  sitio-html:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: grupo7-sitio-html:latest
+    ports:
+      - "8001:80"
+    restart: unless-stopped

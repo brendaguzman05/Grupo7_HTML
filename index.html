@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sitio académico del Grupo 7 sobre los servicios de correo electrónico, sus protocolos y su relación con el Modelo OSI.">
+  <title>Grupo 7 | Servicios de correo electrónico</title>
+</head>
+<body>
+
+  <header>
+  <table border="0" cellpadding="0" cellspacing="0" width="1500">
+    <tr>
+      <td align="left" valign="top">
+        <h1>Servicios de correo electrónico</h1>
+        <p><strong>Grupo 7 | Santiago Lopez - Brenda Guzman</strong></p>
+        <p>Una aproximación a la comunicación por correo electrónico, sus componentes y los protocolos que permiten enviar y consultar mensajes a través de una red.</p>
+      </td>
+      <td align="right" valign="top" width="160">
+        <img src="img/logo_u.png" alt="Logo de la universidad" width="300">
+      </td>
+    </tr>
+  </table>
+
+  <nav aria-label="Navegación principal">
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="integrantes/brenda-guzman.html">Brenda Guzmán</a></li>
+      <li><a href="integrantes/santiago-lopez.html">Santiago López</a></li>
+    </ul>
+  </nav>
+</header>
+
+<hr>
+
+<main>
+
+  <section id="presentacion">
+    <h2>Introducción: ¿cómo funciona el correo electrónico?</h2>
+    <p>
+      El correo electrónico es uno de los servicios de comunicación más utilizados en Internet, aunque desde la perspectiva de una persona parece una tarea sencilla como escribir un mensaje, indicar un destinatario y presionar el botón de enviar, es importante conocer que detrás de esa acción intervienen diferentes programas, servidores y protocolos que trabajan de manera coordinada.
+    </p>
+    <p>
+      Cuando se envía un mensaje, la información debe salir del dispositivo de quien lo redacta, encontrar un servidor que pueda recibirla y llegar al buzón correspondiente. Después, la persona destinataria necesita un mecanismo para consultar ese mensaje, por esta razón, el correo electrónico no depende de un único protocolo, si no que utiliza varios servicios que cumplen funciones diferentes dentro del proceso de comunicación.
+    </p>
+    <p>
+      El tema asignado al Grupo 7 corresponde a los servicios de correo electrónico. 
+      Esta página presenta una explicación conceptual de sus conceptos fundamentales y presenta la función de tecnologías como <strong>SMTP</strong>, <strong>IMAP</strong>, <strong>Postfix</strong> y <strong>Dovecot</strong>, relacionándolas con los contenidos de la capa 7 de Aplicación del Modelo OSI.
+    </p>
+  </section>
+
+  <hr>
+
+<section id="conceptos">
+    <h2>Elementos que participan en el servicio</h2>
+    <p>
+      Para entender cómo viaja un correo electrónico sin entrar todavía en detalles técnicos, resulta útil imaginarlo como un servicio postal tradicional en el que hay alguien que escribe la carta, una dirección en el sobre, oficinas postales que la transportan y un casillero donde se guarda, de modo que en Internet cada una de esas tareas cumple una función específica:
+    </p>
+    <dl>
+      <dt><strong>Cliente de correo </strong></dt>
+      <dd>
+        <p>Es la ventana o programa con el que se interactua todos los días para escribir, leer y organizar mensajes, (como Gmail en el navegador, Outlook o la aplicación de correo del celular), ya que su papel principal es servir como intermediario visual entre la persona y el sistema de correo.</p>
+      </dd>
+
+      <dt><strong>Dirección y dominio de correo</strong></dt>
+      <dd>
+        <p>Representa la ubicacion del destinatario, este funciona como los datos escritos en un sobre y tiene dos partes separadas por la arroba, por ejemplo <code>usuario@gmail.com</code>, donde lo que va antes (<code>usuario</code>) identifica a la persona o cuenta específica, mientras que lo que va después (<code>gmail.com</code>) corresponde al dominio, es decir, el nombre de la organización o proveedor donde está alojada esa cuenta.</p>
+      </dd>
+
+      <dt><strong>Servidor de correo</strong></dt>
+      <dd>
+        <p>Es un computador especializado que permanece encendido y conectado a Internet las 24 horas para gestionar el correo, de manera que, así como una oficina postal recibe cartas, revisa a dónde van y las despacha, el servidor recibe los mensajes que salen, busca hacia dónde enviarlos y guarda los que llegan, aunque en sistemas reales esta labor suele dividirse entre un servicio que transporta mensajes y otro que permite consultarlos.</p>
+      </dd>
+
+      <dt><strong>Buzón</strong></dt>
+      <dd>
+        <p>Es el espacio privado reservado para cada cuenta dentro del servidor y equivale a un casillero postal personal, pues allí quedan almacenados los mensajes incluso cuando la persona apaga su computador o teléfono, manteniéndose organizados en carpetas como la bandeja de entrada, los enviados o los borradores.</p>
+      </dd>
+
+      <dt><strong>Sistema DNS y registros MX </strong></dt>
+      <dd>
+        <p>Cuando se envía un mensaje a <code>@gmail.com</code>, el servidor de salida consulta el <strong>DNS</strong>, que actúa como una guía de direcciones en Internet. Allí revisa una anotación llamada <strong>registro MX</strong> (<em>Mail Exchanger</em>), la cual indica quien es el servidor encargado de recibir los correos de ese dominio.</p>
+      </dd>
+
+      <dt><strong>Protocolos de comunicación</strong></dt>
+      <dd>
+        <p>Para que aplicaciones y servidores fabricados por distintas empresas puedan entenderse sin errores, necesitan seguir las mismas reglas y hablar un mismo idioma técnico, motivo por el cual existen los protocolos, entre los que destacan <strong>SMTP</strong> para enviar y entregar mensajes e <strong>IMAP</strong> para abrir el buzón y leerlos.</p>
+      </dd>
+    </dl>
+  </section>
+
+  <hr>
+
+  <section id="componentes">
+    <h2>Herramientas de referencia: Postfix y Dovecot</h2>
+    <p>
+      En una infraestructura de correo pueden utilizarse diferentes programas para cubrir las tareas de transporte y acceso a los mensajes. Postfix y Dovecot son dos ejemplos que suelen trabajar de manera complementaria, aunque sus funciones no son iguales.
+    </p>
+
+    <article>
+      <h3>Postfix: transporte de mensajes</h3>
+      <p>
+        Postfix es un agente de transferencia de correo, conocido en inglés como <abbr title="Mail Transfer Agent">MTA</abbr> (<em>Mail Transfer Agent</em>), cuya función principal es actuar como el encargado de despacho que mueve los mensajes de un servidor a otro. Cuando recibe un correo mediante el protocolo SMTP, lo ubica en una fila de espera ordenada y determina cuál es la ruta adecuada para entregarlo según su configuración y el destino final.
+      </p>
+      <p>
+        Por ejemplo, cuando un usuario envía un mensaje a una cuenta de otro dominio, el servidor de salida debe identificar a qué servidor dirigirlo, por lo que Postfix consulta los registros <abbr title="Mail Exchanger">MX</abbr> del DNS de ese dominio y, una vez identificado el destino, establece la conexión SMTP para transferir el correo.
+      </p>
+    </article>
+
+    <article>
+      <h3>Dovecot: acceso a los buzones</h3>
+      <p>
+        Dovecot es el programa que gestiona el acceso a los buzones personales, trabajando principalmente con los protocolos <strong>IMAP</strong> y <strong>POP3</strong> (otro protocolo utilizado para descargar mensajes desde el servidor). De este modo, cuando una persona abre su aplicación o página de correo, Dovecot atiende la solicitud para mostrar la bandeja de entrada, organizar las carpetas y mantener los mensajes sincronizados entre distintos dispositivos.
+      </p>
+      <p>
+        Además de permitir la consulta del correo, dispone de mecanismos de entrega local, como <abbr title="Local Delivery Agent">LDA</abbr> (<em>Local Delivery Agent</em>) y <abbr title="Local Mail Transfer Protocol">LMTP</abbr> (<em>Local Mail Transfer Protocol</em>), que sirven para depositar los mensajes recién llegados dentro del buzón correspondiente.
+        Por esta razón, en un sistema donde ambos programas trabajan juntos, Postfix recibe el mensaje desde el exterior y se lo entrega a Dovecot mediante LMTP para que este lo guarde en el casillero del usuario, aunque la tarea exacta que cumpla cada herramienta siempre dependerá de cómo se configure el servidor.
+      </p>
+    </article>
+
+    <table border="1" cellpadding="6">
+      <caption>Comparación general de las herramientas</caption>
+      <thead>
+        <tr>
+          <th>Herramienta</th>
+          <th>Función principal</th>
+          <th>Protocolos o mecanismos relacionados</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Postfix</td>
+          <td>Transferir y gestionar el envío de mensajes entre sistemas de correo.</td>
+          <td>SMTP</td>
+        </tr>
+        <tr>
+          <td>Dovecot</td>
+          <td>Permitir el acceso de los usuarios a los mensajes de sus buzones; también puede participar en la entrega local si se configura.</td>
+          <td>IMAP, POP3, LDA y LMTP</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+ 
+
+  <hr>
+
+  <section id="protocolos">
+    <h2>Protocolos principales: SMTP e IMAP</h2>
+    <p>
+      Aunque ambos se utilizan en los servicios de correo electrónico, SMTP e IMAP no realizan la misma tarea. La diferencia principal está en el momento del proceso en el que intervienen, SMTP se encarga del envío y la transferencia de mensajes, mientras que IMAP permite acceder a los mensajes que se encuentran en un buzón del servidor.
+    </p>
+
+    <article>
+      <h3>SMTP: envío y transferencia</h3>
+      <p>
+        El Simple Mail Transfer Protocol (SMTP), es el conjunto de reglas encargado de enviar y transportar los mensajes de un punto a otro, por lo que entra en acción tanto cuando la aplicación del usuario entrega un correo recién escrito al servidor de salida como cuando un servidor se comunica con otro para llevar ese mensaje hasta su destino.
+      </p>
+      <p>
+        Para lograrlo, durante una conexión SMTP el cliente y el servidor mantienen una breve conversación ordenada mediante comandos y respuestas, en la que primero se identifican, luego indican quién envía el correo y quién lo debe recibir, y finalmente transmiten el contenido del mensaje, de modo que el servidor pueda revisar los datos y responder con un código numérico que confirma si el correo fue aceptado para su entrega o si ocurrió algún problema (como una dirección de destino inexistente).
+      </p>
+    </article>
+
+    <article>
+      <h3>IMAP: consulta y organización de mensajes</h3>
+      <p>
+        El Internet Message Access Protocol (IMAP), es el encargado de permitir que una aplicación de correo consulte los mensajes y carpetas directamente en el servidor donde están guardados, lo cual ofrece la gran ventaja de mantener toda la información sincronizada entre distintos dispositivos. De este modo, si una persona lee o borra un correo desde su computador y más tarde revisa su cuenta desde el teléfono, encontrará exactamente los mismos mensajes, carpetas y estados (como leído, no leído o destacado), ya que ambos equipos están consultando el mismo buzón en tiempo real.
+      </p>
+      <p>
+        Por otra parte, conviene tener presente que IMAP no interviene cuando se redacta y envía un mensaje nuevo hacia otra persona, puesto que su función se limita exclusivamente a revisar y administrar el correo almacenado en el buzón, mientras que para despachar mensajes salientes siempre se utiliza un protocolo de envío como SMTP.
+      </p>
+    </article>
+
+<table border="1" cellpadding="6">
+      <caption>Comparación detallada entre SMTP e IMAP</caption>
+      <thead>
+        <tr>
+          <th>Aspecto</th>
+          <th>SMTP</th>
+          <th>IMAP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Función principal</th>
+          <td>Enviar mensajes desde el cliente hacia el servidor de salida y transferirlos entre servidores hasta llegar al dominio de destino.</td>
+          <td>Consultar, leer y organizar los mensajes y carpetas que ya se encuentran almacenados en el buzón del servidor.</td>
+        </tr>
+        <tr>
+          <th>Equipos que participan</th>
+          <td>La aplicación del remitente con su servidor de salida, así como servidores de correo comunicándose entre sí.</td>
+          <td>La aplicación del destinatario comunicándose directamente con el servidor donde está alojado su buzón.</td>
+        </tr>
+        <tr>
+          <th>Manejo y sincronización</th>
+          <td>Solo transporta el mensaje hacia adelante, por lo que no se encarga de guardar carpetas ni de sincronizar estados entre equipos.</td>
+          <td>Mantiene los correos y sus estados (leído, no leído o borrado) sincronizados en tiempo real entre el computador, el celular y la web.</td>
+        </tr>
+        </tr>
+          <th>Ejemplo cotidiano</th>
+          <td>Redactar un correo, presionar el botón de enviar y lograr que el mensaje viaje hacia otra cuenta.</td>
+          <td>Abrir la bandeja de entrada desde el teléfono y revisar un mensaje que llegó mientras el equipo estaba apagado.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      En términos sencillos, SMTP permite que el mensaje salga y avance hacia su destino; IMAP permite que la persona destinataria consulte los mensajes que tiene disponibles en su buzón.
+    </blockquote>
+  </section>
+
+  <hr>
+
+ <section id="recorrido">
+    <h2>¿Qué recorrido sigue un correo electrónico?</h2>
+    <p>
+      Aunque el camino exacto puede variar dependiendo de si el remitente y el destinatario pertenecen al mismo dominio o a proveedores distintos, el siguiente esquema y su lista paso a paso muestran cómo viaja un mensaje cuando se envía hacia una cuenta alojada en otro dominio:
+    </p>
+
+    <p><strong>1.</strong> Redacción: la persona escribe el mensaje desde su cliente de correo e indica la dirección del destinatario.</p>
+    <p><strong>2.</strong> Envío al servidor: el cliente entrega el mensaje al servidor de salida, normalmente mediante SMTP y utilizando los mecanismos de autenticación y protección que tenga configurados el sistema.</p>
+    <p><strong>3.</strong> Procesamiento: el servidor de salida, que puede funcionar con Postfix, recibe el mensaje, lo ubica en su cola de envío y lo prepara para transferirlo.</p>
+    <p><strong>4.</strong> Identificación del destino: como el mensaje va dirigido a otro dominio, el servidor consulta los registros MX del DNS para averiguar qué servidor recibe el correo de ese destino.</p>
+    <p><strong>5.</strong> Transferencia: una vez ubicado el destino, el servidor de salida establece una conexión SMTP con el servidor destinatario para enviarle el mensaje.</p>
+    <p><strong>6.</strong> Entrega al buzón: el servidor que recibe el correo realiza la entrega local, de modo que, según cómo esté configurado el sistema, puede guardarlo por su cuenta o apoyarse en Dovecot (mediante mecanismos como LMTP) para depositarlo en el buzón correspondiente.</p>
+    <p><strong>7.</strong> Consulta: finalmente, la persona destinataria abre su aplicación de correo y se conecta al buzón mediante IMAP para leer el mensaje.</p>
+
+    <figure>
+      <img src="img/Recorrido.jpg" alt="Diagrama de bloques del recorrido de un correo electrónico desde el emisor hasta el buzón del receptor" width="820">
+      <figcaption>Figura 1. Recorrido general de un correo electrónico entre distintos dominios.</figcaption>
+    </figure>
+  </section>
+
+  <hr>
+  
+  <section id="puertos">
+    <h2>Puertos habituales de los servicios de correo</h2>
+    <p>
+      Para que distintos servicios puedan convivir en un mismo servidor sin mezclarse entre sí, las redes utilizan los puertos TCP, que funcionan como las distintas ventanillas de atención de una misma oficina postal, de modo que mientras la dirección del servidor indica a qué edificio llegar, el número de puerto señala exactamente qué tarea se va a realizar en esa conexión.
+    </p>
+    <p>
+      En el correo electrónico no se utiliza un único puerto para todo, ya que resulta necesario separar el envío de mensajes desde la aplicación del usuario, la transferencia entre servidores y la consulta del buzón, además de diferenciar las conexiones tradicionales sin cifrar de aquellas que protegen los datos y las contraseñas mediante TLS (<em>Transport Layer Security</em>, el protocolo de cifrado que asegura la comunicación en Internet).
+    </p>
+
+    <table border="1" cellpadding="6">
+      <caption>Puertos TCP más utilizados en los servicios de correo electrónico</caption>
+      <thead>
+        <tr>
+          <th>Puerto</th>
+          <th>Protocolo</th>
+          <th>Función principal</th>
+          <th>Contexto de uso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>25</strong></td>
+          <td>SMTP</td>
+          <td>Transferencia de mensajes entre distintos servidores de correo.</td>
+          <td>Canal tradicional para la comunicación directa entre servidores.</td>
+        </tr>
+        <tr>
+          <td><strong>587</strong></td>
+          <td>SMTP</td>
+          <td>Recepción de correos nuevos enviados desde la aplicación del usuario hacia su servidor de salida.</td>
+          <td>Puerto habitual en la actualidad para el envío desde clientes de correo.</td>
+        </tr>
+        <tr>
+          <td><strong>465</strong></td>
+          <td>SMTPS</td>
+          <td>Envío de mensajes desde la aplicación del usuario hacia el servidor de salida.</td>
+          <td>Variante del envío desde clientes que incorpora cifrado en la conexión.</td>
+        </tr>
+        <tr>
+          <td><strong>143</strong></td>
+          <td>IMAP</td>
+          <td>Consulta y sincronización de mensajes y carpetas almacenados en el buzón.</td>
+          <td>Puerto tradicional para acceder al buzón desde una aplicación.</td>
+        </tr>
+        <tr>
+          <td><strong>993</strong></td>
+          <td>IMAPS</td>
+          <td>Consulta y administración de los mensajes y carpetas del buzón.</td>
+          <td>Variante del acceso al buzón que incorpora cifrado en la conexión.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      De manera complementaria, cuando un servidor admite el protocolo <strong>POP3</strong> para descargar mensajes, suele emplear el puerto <strong>110</strong> para conexiones estándar y el puerto <strong>995</strong> cuando utiliza cifrado TLS, aunque en cualquier entorno real los puertos habilitados dependerán siempre de la configuración del servidor y de las reglas del firewall.
+    </p>
+  </section>
+  <hr>
+
+  <section id="ejemplos">
+    <h2>Ejemplos simplificados de comunicación</h2>
+    <p>
+      Para comprobar de forma práctica cómo se aplican los conceptos explicados en esta página, imaginemos una situación cotidiana en la que Brenda (<code>brenda@gmail.com</code>) le escribe un correo con el asunto <em>Hola</em> a Santiago (<code>santiago@gmail.com</code>). Aunque en un entorno real los servidores cifran primero la conexión mediante TLS y validan credenciales, los siguientes diálogos simplificados muestran las órdenes que intercambian el cliente (<strong>C</strong>) y el servidor (<strong>S</strong>) durante todo el proceso.
+    </p>
+
+    <article>
+      <h3>Primera parte: Brenda envía el mensaje mediante SMTP</h3>
+      <p>
+        En este primer intercambio, la aplicación de correo de Brenda se comunica con el servidor de salida para entregar el mensaje dirigido a <code>santiago@gmail.com</code>, siguiendo una conversación ordenada en la que cada instrucción recibe una confirmación numérica:
+      </p>
+
+<pre>
+S: 220 smtp.gmail.com ESMTP Postfix
+C: EHLO cliente.gmail.com
+S: 250 smtp.gmail.com
+C: MAIL FROM:&lt;brenda@gmail.com&gt;
+S: 250 Ok
+C: RCPT TO:&lt;santiago@gmail.com&gt;
+S: 250 Ok
+C: DATA
+S: 354 End data with &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt;
+C: Subject: Hola
+C:
+C: Mensaje de prueba.
+C: .
+S: 250 Ok: queued
+C: QUIT
+S: 221 Bye
+</pre>
+
+      <table border="1" cellpadding="6" width="1000">
+        <caption>Traducción paso a paso del diálogo SMTP</caption>
+        <thead>
+          <tr>
+            <th>Comando o código</th>
+            <th>Significado en la comunicación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>220</code> y <code>EHLO</code></td>
+            <td>El servidor saluda al abrir la conexión y el cliente se presenta para iniciar el envío.</td>
+          </tr>
+          <tr>
+            <td><code>MAIL FROM</code> y <code>RCPT TO</code></td>
+            <td>El cliente indica quién envía el correo (<code>brenda@gmail.com</code>) y quién lo debe recibir (<code>santiago@gmail.com</code>).</td>
+          </tr>
+          <tr>
+            <td><code>DATA</code>, <code>354 y el punto (<code>.</code>)</code></td>
+            <td>El cliente avisa que va a redactar el correo, el servidor responde con <code>354</code> indicando que está listo para recibirlo 
+              y, al final, el cliente envía un punto solo entre saltos de línea (<code>&lt;CR&gt;&lt;LF&gt;</code>) para señalar que terminó de escribir.</td>
+          </tr>
+          <tr>
+            <td><code>250 Ok</code> y <code>QUIT</code></td>
+            <td>El servidor confirma con el código <code>250</code> que aceptó el correo en su cola de entrega y finalmente ambos cierran la conexión.</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article>
+      <h3>Segunda parte: Santiago lee el mensaje mediante IMAP</h3>
+      <p>
+        Minutos después, Santiago abre su aplicación de correo desde el celular para revisar su bandeja de entrada, momento en el cual entra en acción el protocolo IMAP para consultar el buzón y mostrar en pantalla el mensaje exacto que envió Brenda:
+      </p>
+
+<pre>
+C: a1 SELECT INBOX
+S: * 2 EXISTS
+S: a1 OK [READ-WRITE] SELECT completed
+C: a2 FETCH 2 BODY[TEXT]
+S: * 2 FETCH (BODY[TEXT] {18}
+S: Mensaje de prueba.
+S: )
+S: a2 OK FETCH completed
+C: a3 LOGOUT
+S: * BYE Logging out
+S: a3 OK Logout completed
+</pre>
+
+      <table border="1" cellpadding="6">
+        <caption>Traducción paso a paso de la consulta IMAP</caption>
+        <thead>
+          <tr>
+            <th>Comando o respuesta</th>
+            <th>Significado en la comunicación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>a1 SELECT INBOX</code></td>
+            <td>La aplicación de Santiago solicita abrir la carpeta principal de su bandeja de entrada (<code>INBOX</code>).</td>
+          </tr>
+          <tr>
+            <td><code>* 2 EXISTS</code></td>
+            <td>El servidor responde avisando que actualmente existen dos mensajes guardados dentro de ese buzón.</td>
+          </tr>
+          <tr>
+            <td><code>a2 FETCH 2 BODY[TEXT]</code></td>
+            <td>El cliente pide leer el contenido del segundo correo, por lo que el servidor le entrega el texto <em>Mensaje de prueba</em>.</td>
+          </tr>
+          <tr>
+            <td><code>a3 LOGOUT</code></td>
+            <td>Una vez consultado el mensaje, la aplicación cierra la sesión de lectura de manera ordenada.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        De esta manera se comprueba cómo ambos protocolos se complementan en una misma historia, ya que <strong>SMTP</strong> se encarga únicamente de transportar el mensaje desde <code>brenda@gmail.com</code> hasta el servidor de destino, mientras que <strong>IMAP</strong> permite que <code>santiago@gmail.com</code> abra su buzón y visualice ese contenido en su dispositivo.
+      </p>
+    </article>
+  </section>
+  <hr>
+
+  <section id="seguridad">
+    <h2>Seguridad y aspectos que deben tenerse en cuenta</h2>
+    <p>
+      Aunque en los ejemplos anteriores se omitieron las contraseñas y el cifrado para facilitar la lectura de los comandos, en un servicio real de correo electrónico resulta indispensable proteger tanto las credenciales de acceso como el contenido de los mensajes mientras viajan por la red. La siguiente tabla resume los principales riesgos y los mecanismos que se aplican para prevenirlos:
+    </p>
+
+    <table border="1" cellpadding="6" width="1000">
+      <caption>Mecanismos principales de seguridad en un servicio de correo electrónico</caption>
+      <thead>
+        <tr>
+          <th>Riesgo o necesidad</th>
+          <th>Mecanismo de protección</th>
+          <th>Funcionamiento en el servicio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lectura de mensajes o captura de contraseñas en la red</td>
+          <td>Cifrado TLS y STARTTLS</td>
+          <td>Protege la comunicación entre cliente y servidor desde el inicio (en los puertos <strong>465</strong> y <strong>993</strong>) o convierte una conexión estándar en cifrada antes de enviar datos privados (en los puertos <strong>587</strong> y <strong>143</strong>).</td>
+        </tr>
+        <tr>
+          <td>Uso no autorizado del servidor para enviar correo masivo (<em>open relay</em>)</td>
+          <td>Autenticación obligatoria</td>
+          <td>El servidor de salida (Postfix) exige usuario y contraseña antes de aceptar correos hacia otros dominios, evitando que terceros lo utilicen para distribuir correo no deseado.</td>
+        </tr>
+        <tr>
+          <td>Exposición de servicios internos o tráfico abusivo</td>
+          <td>firewall</td>
+          <td>Mantiene abiertos hacia Internet únicamente los puertos necesarios y bloquea mecanismos internos como LMTP; además, muchos proveedores filtran el puerto saliente <strong>25</strong> en conexiones domésticas.</td>
+        </tr>
+        <tr>
+          <td>Suplantación de identidad del dominio remitente</td>
+          <td>Registros DNS (SPF, DKIM y DMARC)</td>
+          <td>Permiten que el servidor destinatario compruebe si el mensaje proviene realmente de un servidor autorizado por el dominio de origen y si llegó sin alteraciones.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      En conjunto, la combinación de canales cifrados, autenticación de usuarios y un control adecuado tanto en el cortafuegos como en el DNS garantiza que el intercambio de mensajes entre clientes y servidores se realice de manera confiable y privada.
+    </p>
+  </section>
+  <hr>
+
+  <section id="osi">
+    <h2>Relación con el Modelo OSI</h2>
+    <p>
+      Después de revisar cómo viaja un correo electrónico, qué puertos utiliza y cómo se protege la comunicación, resulta útil ubicar todos estos elementos dentro del <strong>Modelo OSI</strong> (<em>Open Systems Interconnection</em>), un marco de referencia que divide el funcionamiento de las redes en siete niveles o capas para organizar las tareas que permiten que dos equipos se comuniquen.
+    </p>
+
+    <figure>
+      <img src="img/modelo_osi.jpg" alt="Esquema de las siete capas del Modelo OSI destacando la Capa 7 de Aplicación" width="760">
+      <figcaption>Figura 2. Ubicación principal de los protocolos de correo electrónico en la Capa 7 del Modelo OSI.</figcaption>
+    </figure>
+
+    <p>
+      Como se destaca en la figura, los protocolos encargados directamente del servicio de correo electrónico trabajan en la Capa 7 (Aplicación), ya que es el nivel donde las aplicaciones del usuario y los servidores (como Postfix y Dovecot) estructuran los mensajes, gestionan los buzones e intercambian comandos de texto.
+    </p>
+    <p>
+      Sin embargo, la Capa 7 no actúa de forma aislada, sino que se apoya en las capas inferiores para que los datos puedan viajar desde el equipo del remitente hasta el servidor del destinatario. Mientras que las capas de Presentación (Capa 6) y Sesión (Capa 5) intervienen en el formato de los caracteres, la codificación de archivos adjuntos y el cifrado mediante TLS, la Capa 4 (Transporte) emplea el protocolo TCP para garantizar que los paquetes lleguen completos y en orden a través de puertos específicos como el 587 o el 993. Más abajo, la Capa 3 (Red) utiliza el direccionamiento IP para encaminar los datos entre distintos servidores en Internet, y finalmente las capas de Enlace de datos (Capa 2) y Física (Capa 1) se encargan de transmitir las señales a través del cableado o la red inalámbrica.
+    </p>
+
+    <table border="1" cellpadding="6" width="1000">
+      <caption>Participación de las capas del Modelo OSI en el servicio de correo electrónico</caption>
+      <thead>
+        <tr>
+          <th>Capa del Modelo OSI</th>
+          <th>Protocolos o tecnologías</th>
+          <th>Papel en el envío y lectura del correo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Capa 7: Aplicación</strong></td>
+          <td>SMTP, IMAP, POP3, DNS</td>
+          <td>Define los comandos para enviar mensajes, consultar registros MX y gestionar los buzones desde el cliente.</td>
+        </tr>
+        <tr>
+          <td><strong>Capas 6 y 5: Presentación y Sesión</strong></td>
+          <td>MIME, UTF-8, TLS</td>
+          <td>Estandariza el formato del texto o archivos adjuntos y mantiene activa y cifrada la sesión entre cliente y servidor.</td>
+        </tr>
+        <tr>
+          <td><strong>Capa 4: Transporte</strong></td>
+          <td>TCP (puertos 25, 587, 465, 143, 993)</td>
+          <td>Establece una comunicación confiable de extremo a extremo y dirige los datos hacia el puerto del servicio correcto.</td>
+        </tr>
+        <tr>
+          <td><strong>Capas 3, 2 y 1: Red, Enlace y Física</strong></td>
+          <td>IP, Ethernet, Wi-Fi</td>
+          <td>Enruta los paquetes entre redes de distintos dominios y los transmite por el medio físico disponible.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      De este modo se observa que el correo electrónico es un servicio propio de la capa superior del modelo, aunque depende del funcionamiento coordinado de toda la pila de red para entregar cada mensaje a su destino.
+    </p>
+  </section>
+  <hr>
+  
+  <section id="actividad-practica">
+    <h2>Relación con la actividad práctica de Capa 7</h2>
+    <p>
+      Aunque el contenido de este sitio explica el funcionamiento del correo electrónico, su propia publicación aplica directamente los conceptos de la Capa 7 (Aplicación). El navegador solicita las páginas en HTML puro mediante HTTP y el servidor web Nginx, ejecutado dentro de un contenedor Docker construido con el <code>Dockerfile</code> del proyecto, se encarga de entregarlas sin instalar ni configurar Postfix o Dovecot.
+    </p>
+    <p>
+      De forma complementaria, el repositorio en GitHub permite almacenar y versionar los archivos del sitio, mientras que el archivo <code>README.md</code> reúne las instrucciones necesarias para descargar y reproducir la práctica en cualquier otra máquina.
+    </p>
+  </section>
+
+  <hr>
+
+  <section id="glosario">
+    <h2>Glosario de términos</h2>
+    <table border="1" cellpadding="6" width="760">
+      <thead>
+        <tr>
+          <th>Término</th>
+          <th>Definición</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>DNS</strong></td>
+          <td>Sistema que traduce nombres de dominio y permite consultar registros MX para saber qué servidores reciben correo.</td>
+        </tr>
+        <tr>
+          <td><strong>MTA</strong></td>
+          <td>Agente de transferencia de correo encargado de enrutar y transportar mensajes entre servidores.</td>
+        </tr>
+        <tr>
+          <td><strong>IMAP</strong></td>
+          <td>Protocolo de aplicación que permite consultar y administrar mensajes almacenados en el servidor.</td>
+        </tr>
+        <tr>
+          <td><strong>SMTP</strong></td>
+          <td>Protocolo estándar utilizado para enviar y transferir mensajes de correo electrónico.</td>
+        </tr>
+        <tr>
+          <td><strong>TCP</strong></td>
+          <td>Protocolo de transporte orientado a conexión que garantiza la entrega ordenada y sin errores de los datos.</td>
+        </tr>
+        <tr>
+          <td><strong>TLS</strong></td>
+          <td>Protocolo criptográfico que cifra la comunicación entre cliente y servidor para proteger credenciales y mensajes.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <hr>
+
+  <section id="referencias">
+    <h2>Fuentes de consulta</h2>
+    <p>
+      Páginas y documentos técnicos consultados durante la elaboración de este sitio para verificar el funcionamiento de los protocolos de correo y el despliegue del servidor web.
+    </p>
+    <ol>
+      <li><a href="https://www.rfc-editor.org/info/rfc5321" target="_blank" rel="noopener noreferrer">RFC 5321 Simple Mail Transfer Protocol</a>. Documento base donde se define el funcionamiento del protocolo SMTP y el intercambio de mensajes entre servidores.</li>
+      <li><a href="https://www.postfix.org/documentation.html" target="_blank" rel="noopener noreferrer">Documentación oficial de Postfix</a>. Manuales de referencia sobre la arquitectura y configuración básica de un agente de transferencia de correo.</li>
+      <li><a href="https://doc.dovecot.org/" target="_blank" rel="noopener noreferrer">Documentación de Dovecot</a>. Guías técnicas sobre la gestión de buzones y el acceso de clientes mediante IMAP y POP3.</li>
+      <li><a href="https://nginx.org/en/docs/" target="_blank" rel="noopener noreferrer">Documentación de Nginx</a>. Referencia utilizada para entender cómo opera el servidor web en capa de aplicación al entregar archivos HTML.</li>
+      <li><a href="https://docs.docker.com/get-started/" target="_blank" rel="noopener noreferrer">Guía de inicio de Docker</a>. Documentación consultada para estructurar el contenedor y reproducir el entorno del sitio web.</li>
+    </ol>
+  </section>
+
+  <hr>
+
+  <section id="equipo">
+    <h2>Integrantes del Grupo 7</h2>
+    <p>
+      El desarrollo de la actividad se presenta como un trabajo colaborativo. En las páginas individuales se encuentra la información de cada integrante y su reflexión sobre los aprendizajes del curso.
+    </p>
+    <ul>
+      <li><a href="integrantes/brenda-guzman.html">Brenda Guzmán</a></li>
+      <li><a href="integrantes/santiago-lopez.html">Santiago López</a></li>
+    </ul>
+  </section>
+
+</main>
+
+<hr>
+
+<footer>
+  <p>Grupo 7 | Internet: Redes y comunicaciones IP | Tema asignado: servicios de correo electrónico</p>
+  <p><a href="#presentacion">Volver al inicio de la página</a></p>
+</footer>
+
+</body>
+</html>
