@@ -29,12 +29,9 @@ Grupo7_HTML/
 ├── docker-compose.yml
 ├── index.html
 ├── img/
-│   ├── brenda.jpeg
-│   ├── brenda.svg
 │   ├── logo_u.png
 │   ├── modelo_osi.jpg
 │   ├── Recorrido.jpg
-│   └── santiago.svg
 └── integrantes/
     ├── brenda-guzman.html
     └── santiago-lopez.html
